@@ -1,4 +1,324 @@
----
+--
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  TextInput,
+  StyleSheet,
+  SafeAreaView,
+} from 'react-native';
+
+const initialPosts = [
+  {
+    id: '1',
+    name: 'أحمد',
+    color: '#7C3AED',
+    text: 'أهلاً بكم في وَصْل! هنا تبدأ حكايتنا معاً ✨',
+    likes: 12,
+    liked: false,
+  },
+  {
+    id: '2',
+    name: 'سارة',
+    color: '#DB2777',
+    text: 'الأشياء البسيطة تصنع أجمل الذكريات 💜',
+    likes: 8,
+    liked: false,
+  },
+];
+
+export default function App() {
+  const [posts, setPosts] = useState(initialPosts);
+  const [message, setMessage] = useState('');
+  const [tab, setTab] = useState('الرئيسية');
+
+  function addPost() {
+    if (!message.trim()) return;
+
+    setPosts([
+      {
+        id: Date.now().toString(),
+        name: 'أنت',
+        color: '#0891B2',
+        text: message.trim(),
+        likes: 0,
+        liked: false,
+      },
+      ...posts,
+    ]);
+
+    setMessage('');
+    setTab('الرئيسية');
+  }
+
+  function toggleLike(id) {
+    setPosts(current =>
+      current.map(post =>
+        post.id === id
+          ? {
+              ...post,
+              liked: !post.liked,
+              likes: post.likes + (post.liked ? -1 : 1),
+            }
+          : post
+      )
+    );
+  }
+
+  return (
+    <SafeAreaView style={styles.screen}>
+      <View style={styles.header}>
+        <Text style={styles.logo}>وَصْل 💜</Text>
+        <Text style={styles.tagline}>تواصل، شارك، وكن قريباً</Text>
+      </View>
+
+      <View style={styles.tabs}>
+        {['الرئيسية', 'إضافة', 'حسابي'].map(item => (
+          <TouchableOpacity
+            key={item}
+            style={[
+              styles.tab,
+              tab === item && styles.activeTab,
+            ]}
+            onPress={() => setTab(item)}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                tab === item && styles.activeTabText,
+              ]}
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      {tab === 'إضافة' ? (
+        <View style={styles.composer}>
+          <Text style={styles.heading}>منشور جديد ✍️</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="بماذا تفكر اليوم؟"
+            placeholderTextColor="#9CA3AF"
+            multiline
+            textAlignVertical="top"
+            value={message}
+            onChangeText={setMessage}
+          />
+          <TouchableOpacity
+            style={styles.publishButton}
+            onPress={addPost}
+          >
+            <Text style={styles.publishText}>نشر المنشور</Text>
+          </TouchableOpacity>
+        </View>
+      ) : tab === 'حسابي' ? (
+        <View style={styles.profile}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>أ</Text>
+          </View>
+          <Text style={styles.heading}>حسابي الشخصي</Text>
+          <Text style={styles.muted}>مرحباً بك في وَصْل</Text>
+          <Text style={styles.muted}>
+            عدد منشوراتي: {posts.filter(p => p.name === 'أنت').length}
+          </Text>
+          <TouchableOpacity
+            style={styles.publishButton}
+            onPress={() => setTab('إضافة')}
+          >
+            <Text style={styles.publishText}>اكتب منشوراً</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <ScrollView contentContainerStyle={styles.feed}>
+          <Text style={styles.heading}>آخر المنشورات</Text>
+
+          {posts.map(post => (
+            <View key={post.id} style={styles.card}>
+              <View style={styles.userRow}>
+                <View
+                  style={[
+                    styles.avatar,
+                    { backgroundColor: post.color },
+                  ]}
+                >
+                  <Text style={styles.avatarText}>
+                    {post.name[0]}
+                  </Text>
+                </View>
+                <Text style={styles.userName}>{post.name}</Text>
+              </View>
+
+              <Text style={styles.postText}>{post.text}</Text>
+
+              <View style={styles.actions}>
+                <TouchableOpacity
+                  style={styles.likeButton}
+                  onPress={() => toggleLike(post.id)}
+                >
+                  <Text style={styles.likeText}>
+                    {post.liked ? '💜 أعجبني' : '🤍 إعجاب'}
+                  </Text>
+                </TouchableOpacity>
+                <Text style={styles.muted}>
+                  {post.likes} إعجاب
+                </Text>
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  screen: {
+    flex: 1,
+    backgroundColor: '#F5F3FF',
+  },
+  header: {
+    backgroundColor: '#6D28D9',
+    padding: 20,
+    paddingTop: 28,
+  },
+  logo: {
+    color: '#FFFFFF',
+    fontSize: 29,
+    fontWeight: 'bold',
+    textAlign: 'right',
+  },
+  tagline: {
+    color: '#EDE9FE',
+    textAlign: 'right',
+    marginTop: 5,
+  },
+  tabs: {
+    flexDirection: 'row-reverse',
+    backgroundColor: '#FFFFFF',
+    padding: 8,
+    gap: 6,
+  },
+  tab: {
+    flex: 1,
+    padding: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: '#EDE9FE',
+  },
+  tabText: {
+    color: '#6B7280',
+    fontWeight: '600',
+  },
+  activeTabText: {
+    color: '#6D28D9',
+  },
+  feed: {
+    padding: 14,
+    paddingBottom: 30,
+  },
+  heading: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#312E81',
+    textAlign: 'right',
+    marginBottom: 14,
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 18,
+    padding: 16,
+    marginBottom: 14,
+    elevation: 2,
+  },
+  userRow: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 14,
+  },
+  avatar: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#7C3AED',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  avatarText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1F2937',
+  },
+  postText: {
+    fontSize: 16,
+    color: '#374151',
+    textAlign: 'right',
+    lineHeight: 26,
+    marginBottom: 16,
+  },
+  actions: {
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: '#F3F4F6',
+    paddingTop: 12,
+  },
+  likeButton: {
+    backgroundColor: '#F3E8FF',
+    paddingVertical: 9,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+  },
+  likeText: {
+    color: '#6D28D9',
+    fontWeight: 'bold',
+  },
+  muted: {
+    color: '#6B7280',
+    marginTop: 8,
+  },
+  composer: {
+    padding: 18,
+  },
+  input: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 16,
+    minHeight: 150,
+    fontSize: 16,
+    textAlign: 'right',
+    marginBottom: 14,
+  },
+  publishButton: {
+    backgroundColor: '#6D28D9',
+    borderRadius: 14,
+    padding: 15,
+    alignItems: 'center',
+    marginTop: 16,
+  },
+  publishText: {
+    color: '#FFFFFF',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  profile: {
+    alignItems: 'center',
+    padding: 28,
+  },
+});
+-
 title: Create a project
 description: Learn how to create a new Expo project.
 hideTOC: true
