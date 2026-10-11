@@ -1,4 +1,5 @@
 import spawnAsync from '@expo/spawn-async';
+import fs from 'fs';
 import path from 'path';
 
 import { CommandError } from '../../utils/errors';
@@ -25,4 +26,28 @@ export async function buildAsync(
       `Failed to build Android project. "gradlew" exited with error code ${error.status}.`
     );
   }
+}
+
+export function getApkPath(projectRoot: string, props: Pick<BuildProps, 'variant'>): string {
+  const apkDirectory = path.join(projectRoot, 'android/app/build/outputs/apk', props.variant);
+  const metadataPath = path.join(apkDirectory, 'output-metadata.json');
+  if (!fs.existsSync(metadataPath)) {
+    throw new CommandError(`Could not find the built APK in ${apkDirectory}.`);
+  }
+  const contents = fs.readFileSync(metadataPath, 'utf8');
+  let metadata: { elements: { type: string; outputFile: string }[] };
+  try {
+    metadata = JSON.parse(contents);
+  } catch (error: any) {
+    throw new CommandError(
+      `Could not parse JSON in "${metadataPath}".\n\n${contents.trim()}\n\nError: ${error.message}`
+    );
+  }
+  const element = metadata.elements.find(({ type }) => type === 'SINGLE' || type === 'UNIVERSAL');
+  if (!element) {
+    throw new CommandError(
+      `The build made several APKs in ${apkDirectory}, and compile needs one APK that works on every device. If android/app/build.gradle splits APKs by architecture, add \`universalApk true\` to its \`splits.abi\` block.`
+    );
+  }
+  return path.join(apkDirectory, element.outputFile);
 }

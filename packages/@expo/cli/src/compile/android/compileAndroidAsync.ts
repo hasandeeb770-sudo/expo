@@ -1,9 +1,14 @@
+import chalk from 'chalk';
+
+import * as Log from '../../log';
 import { debugEvent, event } from '../events';
 import type { ResolvedOptions } from '../resolveOptions';
-import { buildAsync } from './gradle';
+import { buildAsync, getApkPath } from './gradle';
 import { resolveOptionsAsync } from './resolveOptions';
 
 export async function compileAndroidAsync(projectRoot: string, options: ResolvedOptions) {
+  const doneCompile = event.span();
+
   const props = await resolveOptionsAsync(projectRoot, options);
   debugEvent('android:build_props', {
     variant: props.variant,
@@ -17,4 +22,14 @@ export async function compileAndroidAsync(projectRoot: string, options: Resolved
     throw error;
   }
   doneBuild('build:done', { platform: 'android', mode: props.mode });
+
+  const binaryPath = getApkPath(projectRoot, props);
+  doneCompile('done', {
+    platform: 'android',
+    mode: props.mode,
+    outputType: props.outputType,
+    outputPath: event.path(binaryPath),
+  });
+  Log.log(chalk`\n{green ✓} Build complete`);
+  Log.log(chalk`{bold Binary:} ${binaryPath}`);
 }
