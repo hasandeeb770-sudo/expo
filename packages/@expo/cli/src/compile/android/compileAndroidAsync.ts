@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 
 import * as Log from '../../log';
+import { copyBinaryToOutputAsync } from '../copyBinaryToOutputAsync';
 import { debugEvent, event } from '../events';
 import type { ResolvedOptions } from '../resolveOptions';
 import { buildAsync, getApkPath } from './gradle';
@@ -23,7 +24,10 @@ export async function compileAndroidAsync(projectRoot: string, options: Resolved
   }
   doneBuild('build:done', { platform: 'android', mode: props.mode });
 
-  const binaryPath = getApkPath(projectRoot, props);
+  let binaryPath = getApkPath(projectRoot, props);
+  if (props.outputDir) {
+    binaryPath = await copyBinaryToOutputAsync(binaryPath, props.outputDir);
+  }
   doneCompile('done', {
     platform: 'android',
     mode: props.mode,
