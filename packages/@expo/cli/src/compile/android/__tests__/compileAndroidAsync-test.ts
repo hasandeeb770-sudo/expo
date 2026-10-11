@@ -1,10 +1,12 @@
+import { Log } from '../../../log';
 import { debugEvent, event } from '../../events';
 import type { ResolvedOptions } from '../../resolveOptions';
 import { compileAndroidAsync } from '../compileAndroidAsync';
-import { buildAsync } from '../gradle';
+import { buildAsync, getApkPath } from '../gradle';
 import type { BuildProps } from '../resolveOptions';
 import { resolveOptionsAsync } from '../resolveOptions';
 
+jest.mock('../../../log');
 jest.mock('../gradle');
 jest.mock('../resolveOptions');
 jest.mock('../../events', () => {
@@ -13,6 +15,7 @@ jest.mock('../../events', () => {
     event: Object.assign(jest.fn(), {
       span: jest.fn(() => done),
       error: jest.fn((error) => error),
+      path: jest.fn((path) => path),
     }),
     debugEvent: jest.fn(),
   };
@@ -25,12 +28,21 @@ const props: BuildProps = { ...options, variant: 'debug' };
 describe(compileAndroidAsync, () => {
   it(`builds the app`, async () => {
     jest.mocked(resolveOptionsAsync).mockResolvedValueOnce(props);
+    jest.mocked(getApkPath).mockReturnValueOnce('/app/app-debug.apk');
     await compileAndroidAsync('/app', options);
     expect(resolveOptionsAsync).toHaveBeenCalledWith('/app', options);
     expect(buildAsync).toHaveBeenCalledWith('/app', props);
     expect(debugEvent).toHaveBeenCalledWith('android:build_props', { variant: 'debug' });
     const done = jest.mocked(event.span).mock.results[0]?.value;
     expect(done).toHaveBeenCalledWith('build:done', { platform: 'android', mode: 'development' });
+    expect(done).toHaveBeenCalledWith('done', {
+      platform: 'android',
+      mode: 'development',
+      outputType: 'apk',
+      outputPath: '/app/app-debug.apk',
+    });
+    expect(Log.log).toHaveBeenCalledWith(expect.stringContaining('Build complete'));
+    expect(Log.log).toHaveBeenCalledWith(expect.stringContaining('Binary: /app/app-debug.apk'));
   });
 
   it(`reports a failed build`, async () => {
