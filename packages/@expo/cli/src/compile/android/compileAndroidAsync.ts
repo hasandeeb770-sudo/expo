@@ -1,9 +1,9 @@
-import * as Log from '../../log';
 import type { ResolvedOptions } from '../resolveOptions';
+import { buildAsync } from './gradle';
 import { resolveOptionsAsync } from './resolveOptions';
 
 export async function compileAndroidAsync(projectRoot: string, options: ResolvedOptions) {
-  await resolveOptionsAsync(projectRoot, options);
+  const props = await resolveOptionsAsync(projectRoot, options);
 
-  Log.exit(`expo compile:android is not available yet.`);
+  await buildAsync(projectRoot, props);
 }
