@@ -1,5 +1,16 @@
 # native-tests
 
+## 1.0.2
+
+### Patch Changes
+
+- Updated dependencies. ([#51354](https://github.com/expo/expo/pull/51354), [#50536](https://github.com/expo/expo/pull/50536), [#51124](https://github.com/expo/expo/pull/51124), [#51255](https://github.com/expo/expo/pull/51255), [#51239](https://github.com/expo/expo/pull/51239))
+  - expo-router@58.0.18
+  - expo@58.0.8
+  - expo-updates@58.0.16
+  - expo-splash-screen@58.0.8
+  - expo-notifications@58.1.3
+
 ## 1.0.1
 
 ### Patch Changes

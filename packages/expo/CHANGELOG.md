@@ -1,5 +1,22 @@
 # Changelog
 
+## 58.0.8
+
+### Patch Changes
+
+- [web] Add experimental granular bundle splitting for production exports with async routes. ([#50536](https://github.com/expo/expo/pull/50536) by [@hassankhan](https://github.com/hassankhan))
+- Updated dependencies. ([#51037](https://github.com/expo/expo/pull/51037), [#50536](https://github.com/expo/expo/pull/50536))
+  - expo-modules-core@58.0.16
+  - @expo/cli@58.1.7
+  - @expo/metro-config@58.0.12
+  - @expo/config@58.0.5
+  - @expo/config-plugins@58.0.8
+  - @expo/fingerprint@0.21.5
+  - expo-constants@58.0.11
+  - babel-preset-expo@58.0.13
+  - @expo/local-build-cache-provider@58.0.5
+  - expo-asset@58.0.14
+
 ## 58.0.7
 
 ### Patch Changes

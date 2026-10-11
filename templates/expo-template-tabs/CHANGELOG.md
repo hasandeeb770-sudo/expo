@@ -1,5 +1,17 @@
 # expo-template-tabs
 
+## 58.0.17
+
+### Patch Changes
+
+- Upgrade `react-native-screens` to 4.29.0. ([#51354](https://github.com/expo/expo/pull/51354) by [@Ubax](https://github.com/Ubax))
+- Updated dependencies. ([#51354](https://github.com/expo/expo/pull/51354), [#50536](https://github.com/expo/expo/pull/50536), [#51124](https://github.com/expo/expo/pull/51124), [#51255](https://github.com/expo/expo/pull/51255), [#51239](https://github.com/expo/expo/pull/51239))
+  - expo-router@58.0.18
+  - expo@58.0.8
+  - expo-constants@58.0.11
+  - expo-splash-screen@58.0.8
+  - expo-linking@58.0.12
+
 ## 58.0.16
 
 ### Patch Changes

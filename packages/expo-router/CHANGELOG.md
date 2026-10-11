@@ -1,5 +1,14 @@
 # Changelog
 
+## 58.0.18
+
+### Patch Changes
+
+- Upgrade `react-native-screens` to 4.29.0. ([#51354](https://github.com/expo/expo/pull/51354) by [@Ubax](https://github.com/Ubax))
+- Read `unstable_settings.anchor` only when a layout is first needed, so async routes apply anchors and startup no longer loads every layout. ([#51124](https://github.com/expo/expo/pull/51124) by [@Ubax](https://github.com/Ubax))
+- Pass the current `pathname` and `params` props to the `+html` component. ([#51255](https://github.com/expo/expo/pull/51255) by [@Ubax](https://github.com/Ubax))
+- Wait for the initial navigation state with Suspense. ([#51239](https://github.com/expo/expo/pull/51239) by [@Ubax](https://github.com/Ubax))
+
 ## 58.0.17
 
 ### Patch Changes

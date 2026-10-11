@@ -1,5 +1,13 @@
 # Changelog
 
+## 58.0.16
+
+### Patch Changes
+
+- [Android] Fix minified release builds crashing on launch with `Failed to create an instance of class androidx.work.impl.WorkDatabase.canonicalName`. R8 stripped the no-arg constructor of WorkManager's Room database, which WorkManager creates by reflection; `expo-widgets` now ships consumer keep rules for it and for WorkManager's input mergers. ([#51349](https://github.com/expo/expo/pull/51349) by [@expo-bot](https://github.com/expo-bot))
+- Updated dependencies. ([#51319](https://github.com/expo/expo/pull/51319), [#51237](https://github.com/expo/expo/pull/51237), [#51322](https://github.com/expo/expo/pull/51322), [#51351](https://github.com/expo/expo/pull/51351))
+  - @expo/ui@58.0.16
+
 ## 58.0.15
 
 ### Patch Changes
